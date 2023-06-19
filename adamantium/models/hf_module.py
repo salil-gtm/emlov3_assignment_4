@@ -39,11 +39,7 @@ class HFLitModule(LightningModule):
         self.val_acc_best = MaxMetric()
 
     def forward(self, x: torch.Tensor):
-        # small fix to work with mnist
-        if x.shape[1] == 1:
-            x = repeat(x, "b c h w -> b (repeat c) h w", repeat=3)
-
-        return self.net(pixel_values=x).logits
+        return self.net(x)
 
     def on_train_start(self):
         # by default lightning executes validation step sanity checks before training starts,
@@ -54,9 +50,8 @@ class HFLitModule(LightningModule):
 
     def model_step(self, batch: Any):
         x, y = batch
-        logits = self.forward(x)
-        loss = self.criterion(logits, y)
-        preds = torch.argmax(logits, dim=1)
+        preds = self.forward(x)
+        loss = self.criterion(preds, y)
         return loss, preds, y
 
     def training_step(self, batch: Any, batch_idx: int):
