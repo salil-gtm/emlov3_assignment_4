@@ -44,7 +44,7 @@ python adamantium/train.py data.num_workers=4
 Evaluation can be done using the following commands:
 
 ```bash
-python adamantium/evaluate.py data.num_workers=4
+python adamantium/eval.py data.num_workers=4
 ```
 
 Note: The above commands will run the training & evaluation using the default config file.
@@ -67,20 +67,40 @@ docker run -it salilgtm/emlov3_assignment_4:latest python adamantium/train.py da
 3. To run the docker image for evaluation, use the following command:
 
 ```bash
-docker run -it salilgtm/emlov3_assignment_4:latest python adamantium/evaluate.py data.num_workers=4
+docker run -it salilgtm/emlov3_assignment_4:latest python adamantium/eval.py data.num_workers=4
 ```
 
 Note: The above commands will run the training & evaluation using the default config file.
 
+
+## Config Structure
+
+```bash
+.
+├── __init__.py
+├── data
+│   └── cifar10.yaml
+├── eval.yaml
+├── hydra
+│   └── default.yaml
+├── model
+│   └── hf.yaml
+├── paths
+│   └── default.yaml
+├── train.yaml
+└── trainer
+    ├── cpu.yaml
+    └── default.yaml
+
+5 directories, 9 files
+```
+
+Paramters can be overriden by passing them as arguments to the command line. For example, to change the batch size, use the following command:
+
+```bash
+python adamantium/train.py data.num_workers=4 data.batch_size=64
+```
+
 ## Author
 
 - Salil Gautam
-
-
-
-
-
-
-
-
-
