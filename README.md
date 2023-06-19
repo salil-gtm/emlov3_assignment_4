@@ -58,16 +58,10 @@ Note: The above commands will run the training & evaluation using the default co
 docker pull salilgtm/emlov3_assignment_4:latest
 ```
 
-2. To run the docker image for training, use the following command:
+2. To run the docker image for training & evaluation, use the following command:
 
 ```bash
-docker run -it salilgtm/emlov3_assignment_4:latest python adamantium/train.py data.num_workers=4
-```
-
-3. To run the docker image for evaluation, use the following command:
-
-```bash
-docker run -it salilgtm/emlov3_assignment_4:latest python adamantium/eval.py data.num_workers=4
+docker run -it salilgtm/emlov3_assignment_4:latest sh -c "python adamantium/train.py data.num_workers=4 && python adamantium/eval.py data.num_workers=4"
 ```
 
 Note: The above commands will run the training & evaluation using the default config file.
