@@ -3,22 +3,16 @@ import torch
 from lightning import LightningModule
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
-from einops import repeat
 
 
 class HFLitModule(LightningModule):
-    def __init__(
-        self,
-        net,
-        optimizer: torch.optim.Optimizer,
-        scheduler: torch.optim.lr_scheduler
-    ):
+    def __init__(self, net, optimizer: torch.optim.Optimizer, scheduler: torch.optim.lr_scheduler):
         super().__init__()
 
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
         # ignoring net as the model weights themselves are not a hyperparam
-        self.save_hyperparameters(logger=False, ignore=['net'])
+        self.save_hyperparameters(logger=False, ignore=["net"])
 
         self.net = net
 
@@ -60,10 +54,8 @@ class HFLitModule(LightningModule):
         # update and log metrics
         self.train_loss(loss)
         self.train_acc(preds, targets)
-        self.log("train/loss", self.train_loss,
-                 on_step=False, on_epoch=True, prog_bar=True)
-        self.log("train/acc", self.train_acc, on_step=False,
-                 on_epoch=True, prog_bar=True)
+        self.log("train/loss", self.train_loss, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("train/acc", self.train_acc, on_step=False, on_epoch=True, prog_bar=True)
 
         # return loss or backpropagation will fail
         return loss
@@ -77,18 +69,15 @@ class HFLitModule(LightningModule):
         # update and log metrics
         self.val_loss(loss)
         self.val_acc(preds, targets)
-        self.log("val/loss", self.val_loss, on_step=False,
-                 on_epoch=True, prog_bar=True)
-        self.log("val/acc", self.val_acc, on_step=False,
-                 on_epoch=True, prog_bar=True)
+        self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("val/acc", self.val_acc, on_step=False, on_epoch=True, prog_bar=True)
 
     def on_validation_epoch_end(self):
         acc = self.val_acc.compute()  # get current val acc
         self.val_acc_best(acc)  # update best so far val acc
         # log `val_acc_best` as a value through `.compute()` method, instead of as a metric object
         # otherwise metric would be reset by lightning after each epoch
-        self.log("val/acc_best", self.val_acc_best.compute(),
-                 sync_dist=True, prog_bar=True)
+        self.log("val/acc_best", self.val_acc_best.compute(), sync_dist=True, prog_bar=True)
 
     def test_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.model_step(batch)
@@ -96,10 +85,8 @@ class HFLitModule(LightningModule):
         # update and log metrics
         self.test_loss(loss)
         self.test_acc(preds, targets)
-        self.log("test/loss", self.test_loss, on_step=False,
-                 on_epoch=True, prog_bar=True)
-        self.log("test/acc", self.test_acc, on_step=False,
-                 on_epoch=True, prog_bar=True)
+        self.log("test/loss", self.test_loss, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("test/acc", self.test_acc, on_step=False, on_epoch=True, prog_bar=True)
 
     def on_test_epoch_end(self):
         pass
